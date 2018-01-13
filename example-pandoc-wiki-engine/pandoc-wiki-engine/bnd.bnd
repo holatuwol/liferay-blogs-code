@@ -1,0 +1,3 @@
+Bundle-Name: pandoc-wiki-engine
+Bundle-SymbolicName: com.liferay.pandoc.wiki
+Bundle-Version: 1.0.0
