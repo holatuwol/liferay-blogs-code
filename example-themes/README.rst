@@ -1,0 +1,2 @@
+1. Navigate to ``parent-theme`` and run ``blade gw install`` to add it to your local Maven cache
+2. Navigate to ``child-theme`` and run ``blade gw war`` to build your child theme, which uses ``parent-theme`` as its parent theme
