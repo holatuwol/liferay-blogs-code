@@ -1,0 +1,4 @@
+Bundle-Name: example-group-url-provider
+Bundle-SymbolicName: com.example.groupurlprovider
+Bundle-Version: 1.0.0
+-dsannotations-options: inherit
