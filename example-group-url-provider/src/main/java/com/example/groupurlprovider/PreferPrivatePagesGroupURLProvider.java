@@ -24,6 +24,7 @@ import org.osgi.framework.ServiceReference;
 import org.osgi.service.component.ComponentContext;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
@@ -54,6 +55,13 @@ public class PreferPrivatePagesGroupURLProvider extends GroupURLProvider {
 	    _bundleContext = bundleContext;
 
 	    _deactivateExistingComponent();
+	}
+
+	@Deactivate
+	public void deactivate()
+	    throws Exception {
+
+	    _activateExistingComponent();
 	}
 
 	@Override
@@ -147,6 +155,32 @@ public class PreferPrivatePagesGroupURLProvider extends GroupURLProvider {
 		throws Exception {
 
 		_setSuperClassField("_portal", null);
+	}
+
+	private void _activateExistingComponent()
+		throws Exception {
+
+	    if (_bundleContext == null) {
+	        return;
+	    }
+
+        String componentName = GroupURLProvider.class.getName();
+
+	    Collection<ServiceReference<GroupURLProvider>>
+	        serviceReferences =
+	            _bundleContext.getServiceReferences(
+	                GroupURLProvider.class,
+	                "(component.name=" + componentName + ")");
+
+	    for (ServiceReference serviceReference : serviceReferences) {
+	        Bundle bundle = serviceReference.getBundle();
+
+	        ComponentDescriptionDTO description =
+	            _serviceComponentRuntime.getComponentDescriptionDTO(
+	                bundle, componentName);
+
+	        _serviceComponentRuntime.enableComponent(description);
+	    }
 	}
 
 	private void _deactivateExistingComponent()
