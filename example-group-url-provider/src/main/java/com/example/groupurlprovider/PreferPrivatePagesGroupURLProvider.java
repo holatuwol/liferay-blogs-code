@@ -1,6 +1,5 @@
 package com.example.groupurlprovider;
 
-import com.liferay.site.util.GroupURLProvider;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.log.Log;
@@ -9,9 +8,13 @@ import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.service.permission.GroupPermissionUtil;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.Http;
+import com.liferay.portal.kernel.util.Portal;
+import com.liferay.portal.kernel.util.ReflectionUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
+import com.liferay.site.util.GroupURLProvider;
 
+import java.lang.reflect.Field;
 import java.util.Collection;
 import java.util.Map;
 
@@ -29,7 +32,6 @@ import org.osgi.service.component.runtime.ServiceComponentRuntime;
 import org.osgi.service.component.runtime.dto.ComponentDescriptionDTO;
 
 import javax.portlet.PortletRequest;
-import javax.portlet.PortletURL;
 
 /**
  * @author Minhchau Dang
@@ -54,21 +56,6 @@ public class PreferPrivatePagesGroupURLProvider extends GroupURLProvider {
 	    _deactivateExistingComponent();
 	}
 
-	@Reference(
-	    cardinality = ReferenceCardinality.OPTIONAL,
-	    policy = ReferencePolicy.DYNAMIC,
-	    policyOption = ReferencePolicyOption.GREEDY,
-	    unbind = "unsetGroupURLProvider"
-	)
-	public void setGroupURLProvider(GroupURLProvider groupURLProvider)
-		throws Exception {
-
-	    _deactivateExistingComponent();
-	}
-
-	public void unsetGroupURLProvider(GroupURLProvider groupURLProvider) {
-	}
-
 	@Override
 	protected String getGroupURL(
 		Group group, PortletRequest portletRequest,
@@ -85,13 +72,13 @@ public class PreferPrivatePagesGroupURLProvider extends GroupURLProvider {
 		String groupDisplayURL = group.getDisplayURL(themeDisplay, true);
 
 		if (Validator.isNotNull(groupDisplayURL)) {
-			return _http2.removeParameter(groupDisplayURL, "p_p_id");
+			return _http.removeParameter(groupDisplayURL, "p_p_id");
 		}
 
 		groupDisplayURL = group.getDisplayURL(themeDisplay, false);
 
 		if (Validator.isNotNull(groupDisplayURL)) {
-			return _http2.removeParameter(groupDisplayURL, "p_p_id");
+			return _http.removeParameter(groupDisplayURL, "p_p_id");
 		}
 
 		// Customization END
@@ -114,6 +101,52 @@ public class PreferPrivatePagesGroupURLProvider extends GroupURLProvider {
 		}
 
 		return getGroupAdministrationURL(group, portletRequest);
+	}
+
+	@Reference(
+		cardinality = ReferenceCardinality.OPTIONAL,
+		policy = ReferencePolicy.DYNAMIC,
+		policyOption = ReferencePolicyOption.GREEDY,
+		target = "(component.name=com.liferay.site.util.GroupURLProvider)",
+		unbind = "unsetGroupURLProvider"
+	)
+	protected void setGroupURLProvider(GroupURLProvider groupURLProvider)
+		throws Exception {
+
+		_deactivateExistingComponent();
+	}
+
+	@Reference(unbind = "unsetHttp")
+	protected void setHttp(Http http)
+		throws Exception {
+
+		_http = http;
+
+		_setSuperClassField("_http", http);
+	}
+
+	protected void unsetGroupURLProvider(GroupURLProvider groupURLProvider) {
+	}
+
+	@Reference(unbind = "unsetPortal")
+	protected void setPortal(Portal portal)
+		throws Exception {
+
+		_setSuperClassField("_portal", portal);
+	}
+
+	protected void unsetHttp(Http http)
+		throws Exception {
+
+		_http = null;
+
+		_setSuperClassField("_http", null);
+	}
+
+	protected void unsetPortal(Portal portal)
+		throws Exception {
+
+		_setSuperClassField("_portal", null);
 	}
 
 	private void _deactivateExistingComponent()
@@ -142,13 +175,22 @@ public class PreferPrivatePagesGroupURLProvider extends GroupURLProvider {
 	    }
 	}
 
+	private void _setSuperClassField(String name, Object value)
+		throws Exception {
+
+		Field field = ReflectionUtil.getDeclaredField(
+			GroupURLProvider.class, name);
+
+		field.set(this, value);
+	}
+
+
 	private static final Log _log = LogFactoryUtil.getLog(
 		PreferPrivatePagesGroupURLProvider.class);
 
 	private BundleContext _bundleContext;
 
-	@Reference
-	private Http _http2;
+	private Http _http;
 
 	@Reference
 	private ServiceComponentRuntime _serviceComponentRuntime;
