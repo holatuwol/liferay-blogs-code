@@ -1,0 +1,5 @@
+Bundle-Name: omni-admin-autologin
+Bundle-SymbolicName: omni.admin.autologin
+Bundle-Version: 7.0.1
+
+Import-Package: *;version="[1,999)"
