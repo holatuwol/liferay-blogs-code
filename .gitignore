@@ -7,6 +7,10 @@
 **/bin
 **/build
 **/build_gradle
+**/gradle
+**/gradlew
+**/gradle.bat
+**/gradlew.bat
 **/node_modules
 **/test-coverage
 **/tmp

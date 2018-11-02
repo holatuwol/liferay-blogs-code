@@ -1,0 +1,4 @@
+Bundle-Name: Content Targeting Scheduled Job Override
+Bundle-SymbolicName: com.liferay.content.targeting.override.job
+Bundle-Version: 1.0.0
+Export-Package: com.liferay.content.targeting.override.job

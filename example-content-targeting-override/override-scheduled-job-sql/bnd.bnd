@@ -1,0 +1,3 @@
+Bundle-Name: Content Targeting Scheduled Job Override with Plain SQL
+Bundle-SymbolicName: com.liferay.content.targeting.override.job.sql
+Bundle-Version: 1.0.0

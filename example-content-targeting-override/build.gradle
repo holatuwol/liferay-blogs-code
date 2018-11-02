@@ -1,0 +1,45 @@
+buildscript {
+    dependencies {
+		classpath group: "com.liferay", name: "com.liferay.gradle.plugins", version: "3.12.109"
+    	classpath group: "com.liferay", name: "com.liferay.gradle.plugins.target.platform", version: "1.1.3"
+    }
+
+	repositories {
+		mavenLocal()
+
+		maven {
+			url "https://repository-cdn.liferay.com/nexus/content/groups/public"
+		}
+	}
+}
+
+apply plugin: "com.liferay.target.platform"
+
+dependencies {
+	targetPlatformBoms group: "com.liferay.portal", name: "release.dxp.bom", version: "7.0.10"
+	targetPlatformBoms group: "com.liferay.content-targeting", name: "liferay.audience.targeting.lpkg.bom", version: "2.1.2"
+}
+
+subprojects { subproject ->
+	apply plugin: "com.liferay.plugin"
+
+	plugins.withId("java") {
+		sourceCompatibility = "1.8"
+	}
+
+	formatSource {
+		maxLineLength = 80
+	}
+
+	liferay {
+		deployDir = "/opt/liferay/lpp28158/bundles/osgi/modules"
+	}
+
+	repositories {
+		mavenLocal()
+
+		maven {
+			url "https://repository-cdn.liferay.com/nexus/content/groups/public"
+		}
+	}
+}
