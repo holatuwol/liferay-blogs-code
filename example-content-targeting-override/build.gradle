@@ -16,8 +16,8 @@ buildscript {
 apply plugin: "com.liferay.target.platform"
 
 dependencies {
-	targetPlatformBoms group: "com.liferay.portal", name: "release.dxp.bom", version: "7.0.10"
-	targetPlatformBoms group: "com.liferay.content-targeting", name: "liferay.audience.targeting.lpkg.bom", version: "2.1.2"
+	targetPlatformBoms group: "com.liferay.portal", name: "release.dxp.bom", version: "7.0.10.7"
+	targetPlatformBoms group: "com.liferay.content-targeting", name: "liferay.audience.targeting-2.x-ad66e160e00c982018f0c1115b3dcf08930cf128-201802211715.lpkg.bom", version: "2.1.220180221"
 }
 
 subprojects { subproject ->
