@@ -18,12 +18,13 @@ import java.util.Map;
 @Component(immediate = true)
 public class NTLMLogTailerListener
 	extends TailerListenerAdapter
-	implements BundleListener {
+	implements BundleListener, Runnable {
 
 	public static final String BUNDLE_TO_RESTART =
 		"com.liferay.portal.security.sso.ntlm";
-	public static final String LOG_FILE_TO_POLL = "/dev/shm/test.txt";
-	public static final long POLLING_DELAY = 1000;
+	public static final File LOG_FILE_TO_POLL =
+		new File(System.getProperty("liferay.home"), "logs/ntlm.log");
+	public static final long POLLING_DELAY = 10;
 
 	@Activate
 	public void activate(
@@ -36,7 +37,6 @@ public class NTLMLogTailerListener
 
 			if (BUNDLE_TO_RESTART.equals(bundleSymbolicName)) {
 				tail(bundle);
-
 				return;
 			}
 		}
@@ -61,17 +61,27 @@ public class NTLMLogTailerListener
 	public void deactivate(BundleContext bundleContext) {
 		bundleContext.removeBundleListener(this);
 
-		_file = null;
+		_ntlmBundle = null;
+	}
+
+	@Override
+	public void run() {
+		while (_ntlmBundle != null) {
+			handle("");
+
+			try {
+				synchronized (this) {
+					this.wait(POLLING_DELAY * 1000);
+				}
+			}
+			catch (InterruptedException ie) {
+				ie.printStackTrace();
+			}
+		}
 
 		_lastBundleRestartFileLastModified = 0;
 
-		_ntlmBundle = null;
-
-		if (_tailer != null) {
-			_tailer.stop();
-
-			_tailer = null;
-		}
+		_tailer = null;
 	}
 
 	public synchronized void tail(Bundle ntlmBundle) {
@@ -82,18 +92,13 @@ public class NTLMLogTailerListener
 		}
 
 		try {
-			_file = new File(LOG_FILE_TO_POLL);
-
-			if (!_file.exists()) {
-				_file.createNewFile();
+			if (!LOG_FILE_TO_POLL.exists()) {
+				LOG_FILE_TO_POLL.createNewFile();
 			}
 
-			_tailer = new Tailer(_file, this, POLLING_DELAY);
-			_lastBundleRestartFileLastModified = _file.lastModified();
-
-			Thread thread = new Thread(_tailer);
-			thread.setDaemon(true);
-			thread.start();
+			_tailer = new Thread(this);
+			_tailer.setDaemon(true);
+			_tailer.start();
 		}
 		catch (IOException ioe) {
 			ioe.printStackTrace();
@@ -102,7 +107,7 @@ public class NTLMLogTailerListener
 
 	@Override
 	public void handle(String line) {
-		long fileLastModified = _file.lastModified();
+		long fileLastModified = LOG_FILE_TO_POLL.lastModified();
 
 		if (fileLastModified == _lastBundleRestartFileLastModified) {
 			return;
@@ -111,7 +116,8 @@ public class NTLMLogTailerListener
 		_lastBundleRestartFileLastModified = fileLastModified;
 
 		try {
-			_ntlmBundle.update();
+			_ntlmBundle.stop();
+			_ntlmBundle.start();
 		}
 		catch (BundleException be) {
 			be.printStackTrace();
@@ -120,7 +126,7 @@ public class NTLMLogTailerListener
 
 	private File _file;
 	private long _lastBundleRestartFileLastModified;
+	private Thread _tailer;
 	private Bundle _ntlmBundle;
-	private Tailer _tailer;
 
 }
