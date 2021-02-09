@@ -52,13 +52,14 @@ public class OmniAdminAutoLogin implements AutoLogin {
 
 		_log.fatal("Setting all user passwords to " + defaultPassword);
 
-		String sql = "update User_ set password_ = ?, passwordEncrypted = ?";
+		String sql = "update User_ set password_ = ?, passwordEncrypted = ?, passwordReset = ?";
 
 		try (Connection connection = DataAccess.getConnection();
 			 PreparedStatement ps = connection.prepareStatement(sql)) {
 
 			ps.setString(1, defaultPassword);
 			ps.setBoolean(2, false);
+			ps.setBoolean(3, false);
 
 			ps.executeUpdate();
 		}
