@@ -1,0 +1,5 @@
+Bundle-Name: omni-admin-store
+Bundle-SymbolicName: omni.admin.store
+Bundle-Version: 7.0.1
+
+Import-Package: *;version="[1,999)"
