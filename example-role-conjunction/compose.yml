@@ -1,0 +1,35 @@
+version: '2.2'
+services:
+  liferay:
+    image: 'liferay/dxp:7.4.13-u92'
+    environment:
+      LIFERAY_DISABLE_TRIAL_LICENSE: true
+      LIFERAY_JDBC_PERIOD_DEFAULT_PERIOD_DRIVER_UPPERCASEC_LASS_UPPERCASEN_AME: org.postgresql.Driver
+      LIFERAY_JDBC_PERIOD_DEFAULT_PERIOD_URL: jdbc:postgresql://database:5432/lportal
+      LIFERAY_JDBC_PERIOD_DEFAULT_PERIOD_USERNAME: lportal
+      LIFERAY_JDBC_PERIOD_DEFAULT_PERIOD_PASSWORD: lportal
+      LIFERAY_ROLES_PERIOD_REGULAR_PERIOD_SUBTYPES: Location,Department,Position
+      LIFERAY_JPDA_ENABLED: true
+      LIFERAY_COMPANY_PERIOD_SECURITY_PERIOD_STRANGERS_PERIOD_VERIFY: false
+    volumes:
+      - liferay_configs:/opt/liferay/osgi/configs/
+      - liferay_data:/opt/liferay/data/
+      - ./bundles/osgi/modules/:/opt/liferay/osgi/modules/
+    ports:
+      - 127.0.0.1:8000:8000
+      - 127.0.0.1:8080:8080
+
+  database:
+    image: postgres:13.11-bullseye
+    environment:
+      POSTGRES_USER: lportal
+      POSTGRES_PASSWORD: lportal
+    volumes:
+      - pgsql_data:/var/lib/postgresql/data
+    ports:
+      - 5432
+
+volumes:
+  liferay_configs:
+  liferay_data:
+  pgsql_data:

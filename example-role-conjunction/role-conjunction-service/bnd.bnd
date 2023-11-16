@@ -1,0 +1,7 @@
+Bundle-Name: role-conjunction-service
+Bundle-SymbolicName: com.example.roleconjunction.service
+Bundle-Version: 1.0.0
+Liferay-Site-Initializer-Name: Role Conjunction Service
+Provide-Capability: liferay.site.initializer
+Web-ContextPath: /role-conjunction-service
+-dsannotations-options: inherit

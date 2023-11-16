@@ -1,0 +1,135 @@
+[
+	{
+		"actions": [],
+		"name": "United States",
+		"scope": 1,
+		"type": 1,
+		"subtype": "Location"
+	},
+	{
+		"actions": [],
+		"name": "Brazil",
+		"scope": 1,
+		"type": 1,
+		"subtype": "Location"
+	},
+	{
+		"actions": [],
+		"name": "Spain",
+		"scope": 1,
+		"type": 1,
+		"subtype": "Location"
+	},
+	{
+		"actions": [],
+		"name": "Hungary",
+		"scope": 1,
+		"type": 1,
+		"subtype": "Location"
+	},
+	{
+		"actions": [],
+		"name": "China",
+		"scope": 1,
+		"type": 1,
+		"subtype": "Location"
+	},
+	{
+		"actions": [],
+		"name": "Japan",
+		"scope": 1,
+		"type": 1,
+		"subtype": "Location"
+	},
+	{
+		"actions": [],
+		"name": "India",
+		"scope": 1,
+		"type": 1,
+		"subtype": "Location"
+	},
+	{
+		"actions": [],
+		"name": "Subscription Services",
+		"scope": 1,
+		"type": 1,
+		"subtype": "Department"
+	},
+	{
+		"actions": [],
+		"name": "Customer Operations",
+		"scope": 1,
+		"type": 1,
+		"subtype": "Department"
+	},
+	{
+		"actions": [],
+		"name": "Global Services",
+		"scope": 1,
+		"type": 1,
+		"subtype": "Department"
+	},
+	{
+		"actions": [],
+		"name": "Customer Success",
+		"scope": 1,
+		"type": 1,
+		"subtype": "Department"
+	},
+	{
+		"actions": [],
+		"name": "Marketing",
+		"scope": 1,
+		"type": 1,
+		"subtype": "Department"
+	},
+	{
+		"actions": [],
+		"name": "Sales",
+		"scope": 1,
+		"type": 1,
+		"subtype": "Department"
+	},
+	{
+		"actions": [],
+		"name": "Engineering",
+		"scope": 1,
+		"type": 1,
+		"subtype": "Department"
+	},
+	{
+		"actions": [],
+		"name": "Chief Officer",
+		"scope": 1,
+		"type": 1,
+		"subtype": "Position"
+	},
+	{
+		"actions": [],
+		"name": "Vice President",
+		"scope": 1,
+		"type": 1,
+		"subtype": "Position"
+	},
+	{
+		"actions": [],
+		"name": "Director",
+		"scope": 1,
+		"type": 1,
+		"subtype": "Position"
+	},
+	{
+		"actions": [],
+		"name": "Full Time Employee",
+		"scope": 1,
+		"type": 1,
+		"subtype": "Position"
+	},
+	{
+		"actions": [],
+		"name": "Part Time Employee",
+		"scope": 1,
+		"type": 1,
+		"subtype": "Position"
+	}
+]
