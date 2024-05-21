@@ -40,7 +40,7 @@ import org.osgi.service.component.annotations.Reference;
 
 @Component(
 	property = {
-		"after-filter=Auto Login Filter", "dispatcher=FORWARD",
+		"before-filter=Auto Login Filter", "dispatcher=FORWARD",
 		"servlet-context-name=",
 		"servlet-filter-name=Omni Admin Auto Login Filter", "url-pattern=/c/portal/layout"
 	},
