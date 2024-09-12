@@ -1,0 +1,5 @@
+Bundle-Name: omni-admin-captcha
+Bundle-SymbolicName: omni.admin.captcha
+Bundle-Version: 7.0.1
+
+Import-Package: *;version="[1,999)"
