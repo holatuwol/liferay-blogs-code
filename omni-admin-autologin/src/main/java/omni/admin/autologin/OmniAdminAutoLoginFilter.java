@@ -1,7 +1,6 @@
 package omni.admin.autologin;
 
 import com.liferay.portal.kernel.dao.jdbc.DataAccess;
-import com.liferay.portal.kernel.dao.orm.EntityCache;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
@@ -50,34 +49,9 @@ public class OmniAdminAutoLoginFilter extends BasePortalFilter {
 
 	@Activate
 	public void activate() throws Exception {
-		String defaultPassword = PropsUtil.get(
-			PropsKeys.DEFAULT_ADMIN_PASSWORD);
-
-		_log.fatal("Setting all user passwords to " + defaultPassword);
-
-		String sql =
-			"update User_ set password_ = ?, passwordEncrypted = ?, passwordReset = ?, agreedToTermsOfUse = ?, emailAddressVerified = ?";
-
-		try (Connection connection = DataAccess.getConnection();
-			PreparedStatement ps = connection.prepareStatement(sql)) {
-
-			ps.setString(1, defaultPassword);
-			ps.setBoolean(2, false);
-			ps.setBoolean(3, false);
-			ps.setBoolean(4, true);
-			ps.setBoolean(5, true);
-
-			ps.executeUpdate();
-		}
-
-		_log.fatal("Clearing entity cache");
-
-		_entityCache.clearCache();
 	}
 
-	protected User getCompanyAdmin(HttpServletRequest request) {
-		long companyId = PortalUtil.getCompanyId(request);
-
+	protected User getCompanyAdmin(long companyId) {
 		Role role = _roleLocalService.fetchRole(
 			companyId, RoleConstants.ADMINISTRATOR);
 
@@ -105,7 +79,7 @@ public class OmniAdminAutoLoginFilter extends BasePortalFilter {
 		return users.get(0);
 	}
 
-	protected User getOmniAdmin() {
+	protected User getOmniAdmin(long companyId) {
 		int[] omniAdminUserIds = GetterUtil.getIntegerValues(
 			PropsUtil.getArray(PropsKeys.OMNIADMIN_USERS));
 
@@ -130,12 +104,11 @@ public class OmniAdminAutoLoginFilter extends BasePortalFilter {
 		return null;
 	}
 
-	protected User getPortletPropertyUser(HttpServletRequest request)
+	protected User getPortletPropertyUser(long companyId)
 		throws PortalException {
 
 		initProperties();
 
-		long companyId = PortalUtil.getCompanyId(request);
 		String screenName = _properties.getProperty("auto.login.screenname");
 
 		if (Validator.isNull(screenName)) {
@@ -163,14 +136,16 @@ public class OmniAdminAutoLoginFilter extends BasePortalFilter {
 		_log.fatal(
 			"Attempting to find a user for authentication against session " + session.getId() + " on path " + PortalUtil.getCurrentURL(request) + "...");
 
-		User user = getPortletPropertyUser(request);
+		long companyId = PortalUtil.getCompanyId(request);
+
+		User user = getPortletPropertyUser(companyId);
 
 		if (user == null) {
-			user = getOmniAdmin();
+			user = getOmniAdmin(companyId);
 		}
 
 		if (user == null) {
-			user = getCompanyAdmin(request);
+			user = getCompanyAdmin(companyId);
 		}
 
 		if (user == null) {
@@ -265,9 +240,6 @@ public class OmniAdminAutoLoginFilter extends BasePortalFilter {
 
 	private static final Log _log = LogFactoryUtil.getLog(
 		OmniAdminAutoLoginFilter.class);
-
-	@Reference
-	private EntityCache _entityCache;
 
 	@Reference
 	private GroupLocalService _groupLocalService;
